@@ -1,0 +1,64 @@
+#!/sbin/sh
+# Shell Script EDIFY Replacement: Recovery Flashable Zip
+# osm0sis @ xda-developers
+# Modified by Simon1511
+
+OUTFD=/proc/self/fd/$2;
+ZIPFILE="$3";
+DIR=$(dirname "$ZIPFILE");
+
+# ui_print "<message>" ["<message 2>" ...]
+ui_print() {
+  while [ "$1" ]; do
+    echo -e "ui_print $1
+      ui_print" >> $OUTFD;
+    shift;
+  done;
+}
+# set_progress <amount>
+set_progress() { echo "set_progress $1" >> $OUTFD; }
+
+# is_mounted <partition>
+is_mounted() { if [ "$(mount | grep " $1 ")" ]; then echo 1; else echo 0; fi; }
+
+# package_extract_dir <dir> <destination_dir>
+package_extract_dir() {
+  local entry outfile;
+  for entry in $(unzip -l "$ZIPFILE" 2>/dev/null | tail -n+4 | grep -v '/$' | grep -o " $1.*$" | cut -c2-); do
+    outfile="$(echo "$entry" | sed "s|${1}|${2}|")";
+    mkdir -p "$(dirname "$outfile")";
+    unzip -o "$ZIPFILE" "$entry" -p > "$outfile";
+  done;
+}
+
+## Installation
+
+if [[ -z $(getprop ro.boot.bootloader | grep -E "A528|M526|A736") ]]; then
+    ui_print "- Device is not an A52s/M52/A73, aborting..."
+    exit 1
+fi
+
+set_progress 30
+ui_print "- Mounting /vendor..."
+
+if is_mounted /vendor; then
+    umount /vendor
+fi
+mount -o rw /dev/block/mapper/vendor /vendor
+
+if ! is_mounted /vendor; then
+    ui_print "- Failed to mount /vendor, aborting..."
+    exit 1
+fi
+
+set_progress 60
+ui_print "- Extracing firmware..."
+
+package_extract_dir "vendor" "/vendor"
+
+set_progress 90
+ui_print "- Firmware extracted successfully"
+
+set_progress 100
+ui_print "- Unmounting partitions"
+umount /vendor
