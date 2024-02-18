@@ -59,6 +59,13 @@ package_extract_dir "vendor" "/vendor"
 set_progress 90
 ui_print "- Firmware extracted successfully"
 
+sdk=$(grep "ro.vendor.build.version.sdk" /vendor/build.prop | sed "s/ro\.vendor\.build\.version\.sdk\=//g")
+
+if ! grep -q "vendor_firmware_file (file (mounton" /vendor/etc/selinux/vendor_sepolicy.cil; then
+    ui_print "- Patching SePolicy..."
+    echo "(allow init_"$sdk"_0 vendor_firmware_file (file (mounton)))" >> /vendor/etc/selinux/vendor_sepolicy.cil
+fi
+
 set_progress 100
 ui_print "- Unmounting partitions"
 umount /vendor
