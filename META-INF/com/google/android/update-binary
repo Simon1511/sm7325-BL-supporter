@@ -41,12 +41,12 @@ fi
 set_progress 30
 ui_print "- Mounting /vendor..."
 
-if is_mounted /vendor; then
+if is_mounted vendor; then
     umount /vendor
 fi
 mount -o rw /dev/block/mapper/vendor /vendor
 
-if ! is_mounted /vendor; then
+if ! is_mounted vendor; then
     ui_print "- Failed to mount /vendor, aborting..."
     exit 1
 fi
@@ -65,6 +65,26 @@ if ! grep -q "vendor_firmware_file (file (mounton" /vendor/etc/selinux/vendor_se
     ui_print "- Patching SePolicy..."
     echo "(allow init_"$sdk"_0 vendor_firmware_file (file (mounton)))" >> /vendor/etc/selinux/vendor_sepolicy.cil
 fi
+
+if [[ -n $(ls /vendor/firmware/* | grep "ipa_fws") ]]; then
+    ui_print "- Removing obsolete files..."
+    rm /vendor/firmware/*ipa_fws*
+fi
+
+if grep -q "wpss" /vendor/etc/init/ipa_fws.rc; then
+    ui_print "- Removing previous WPSS firmware mount..."
+    echo "" > /vendor/etc/init/ipa_fws.rc
+    echo "on early-boot" >> /vendor/etc/init/ipa_fws.rc
+    echo "write /dev/ipa 1" >> /vendor/etc/init/ipa_fws.rc
+fi
+
+chmod 0644 /vendor/etc/init/wifi_firmware.rc
+chmod -R 0755 /vendor/firmware/wlan/a52*
+chmod -R 0755 /vendor/firmware/wlan/m52*
+chmod -R 0755 /vendor/firmware/wlan/a73*
+
+chcon "u:object_r:vendor_configs_file:s0" /vendor/etc/init/wifi_firmware.rc
+chcon -R "u:object_r:vendor_firmware_file:s0" /vendor/firmware/wlan/*
 
 set_progress 100
 ui_print "- Unmounting partitions"
