@@ -1,1 +1,3 @@
-7z a -mmt16 -tzip blsupporter-v1.0.zip META-INF/ vendor/
+read -p "version: " version
+
+7z a -mmt16 -tzip blsupporter-"$version".zip META-INF/ vendor/
