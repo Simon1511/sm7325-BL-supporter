@@ -51,10 +51,51 @@ if ! is_mounted vendor; then
     exit 1
 fi
 
+if [[ -n $(mount | grep "vendor" | grep "erofs") ]] || [[ -n $(mount | grep "vendor" | grep "f2fs") ]]; then
+    ui_print "- Read-Only filesystem detected (EROFS or F2FS)"
+    ui_print "- Aborting..."
+    exit 1
+fi
+
+freespace=$(expr $(df | grep "vendor" | awk '{ print $2 }') - $(df | grep "vendor" | awk '{ print $3 }'))
+
+# ~8kB per firmware
+if [[ $freespace -lt 8000 ]]; then
+    ui_print "- Not enough space available in /vendor, aborting..."
+    exit 1
+fi
+
 set_progress 60
 ui_print "- Extracing firmware..."
 
-package_extract_dir "vendor" "/vendor"
+rev=$(getprop ro.boot.rp)
+
+if [[ -n $(getprop ro.boot.bootloader | grep "A528B") ]]; then
+    device="a528b"
+elif [[ -n $(getprop ro.boot.bootloader | grep "A528N") ]]; then
+    device="a528n"
+elif [[ -n $(getprop ro.boot.bootloader | grep "M526BR") ]]; then
+    device="m526br"
+elif [[ -n $(getprop ro.boot.bootloader | grep "M526B") ]]; then
+    device="m526b"
+elif [[ -n $(getprop ro.boot.bootloader | grep "A736") ]]; then
+    device="a736b"
+else
+    device=""
+fi
+
+mkdir /tmp/vendor
+package_extract_dir "vendor" "/tmp/vendor"
+neededspace=$(du -s /tmp/vendor | awk '{ print $1 }')
+
+## compare free space and needed space
+if [[ $freespace -lt $neededspace ]] && [[ $device != "" ]]; then
+    mkdir -p /vendor/firmware/wlan/$device/rev$rev
+    mv /tmp/vendor/firmware/wlan/$device/rev$rev/* /vendor/firmware/wlan/$device/rev$rev
+    mv /tmp/vendor/etc/* /vendor/etc
+else
+    mv /tmp/vendor/* /vendor
+fi
 
 set_progress 90
 ui_print "- Firmware extracted successfully"
