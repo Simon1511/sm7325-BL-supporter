@@ -136,6 +136,18 @@ on fs && property:ro.boot.rp=8 && property:ro.boot.em.model=SM-A528B
     mount none /vendor/firmware/wlan/a528b/rev8/wpss.b07 /vendor/firmware/wpss.b07 bind
     mount none /vendor/firmware/wlan/a528b/rev8/wpss.mdt /vendor/firmware/wpss.mdt bind
 
+# bootloader revision 9, A528B (international)
+on fs && property:ro.boot.rp=9 && property:ro.boot.em.model=SM-A528B
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b00 /vendor/firmware/wpss.b00 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b01 /vendor/firmware/wpss.b01 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b02 /vendor/firmware/wpss.b02 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b03 /vendor/firmware/wpss.b03 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b04 /vendor/firmware/wpss.b04 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b05 /vendor/firmware/wpss.b05 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b06 /vendor/firmware/wpss.b06 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.b07 /vendor/firmware/wpss.b07 bind
+    mount none /vendor/firmware/wlan/a528b/rev9/wpss.mdt /vendor/firmware/wpss.mdt bind
+
 # bootloader revision 1, M526BR (international)
 on fs && property:ro.boot.rp=1 && property:ro.boot.em.model=SM-M526BR
     mount none /vendor/firmware/wlan/m526br/rev1/wpss.b00 /vendor/firmware/wpss.b00 bind
@@ -317,3 +329,15 @@ on fs && property:ro.boot.rp=8 && property:ro.boot.em.model=SM-A736B
     mount none /vendor/firmware/wlan/a736b/rev8/wpss.b06 /vendor/firmware/wpss.b06 bind
     mount none /vendor/firmware/wlan/a736b/rev8/wpss.b07 /vendor/firmware/wpss.b07 bind
     mount none /vendor/firmware/wlan/a736b/rev8/wpss.mdt /vendor/firmware/wpss.mdt bind
+
+# bootloader revision 9, A736B
+on fs && property:ro.boot.rp=9 && property:ro.boot.em.model=SM-A736B
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b00 /vendor/firmware/wpss.b00 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b01 /vendor/firmware/wpss.b01 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b02 /vendor/firmware/wpss.b02 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b03 /vendor/firmware/wpss.b03 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b04 /vendor/firmware/wpss.b04 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b05 /vendor/firmware/wpss.b05 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b06 /vendor/firmware/wpss.b06 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.b07 /vendor/firmware/wpss.b07 bind
+    mount none /vendor/firmware/wlan/a736b/rev9/wpss.mdt /vendor/firmware/wpss.mdt bind
